@@ -1,28 +1,84 @@
 # Gene Expression PCA Pipeline
 
-This repository implements a minimal, explicit and reproducible exploratory pipeline for gene expression data analysis.
+This repository implements a minimal, explicit, and reproducible exploratory pipeline for gene expression data, including normalization, transformation, and PCA-based inspection of sample structure.
 
-The goal of this project is to formalize the typical first steps of a transcriptomics analysis workflow:
+The pipeline formalizes the standard numerical conditioning and exploratory steps used before any multivariate analysis of expression data, making the structure of the dataset explicit, inspectable, and reproducible.
 
-- Load a gene expression count matrix
-- Normalize counts to make samples comparable
-- Apply log-transformation for numerical stabilization
-- Perform PCA (Principal Component Analysis)
-- Inspect the global structure of the samples
-
-This project is **not** intended to perform differential expression analysis or biological interpretation.  
-Its focus is strictly on **data preparation, numerical conditioning and exploratory structure inspection**.
+It provides a clear, modular workflow to load expression matrices and metadata, apply normalization and transformation, compute PCA, and generate interpretable artifacts for downstream analysis.
 
 ---
 
-## Planned pipeline steps
+## Overview
 
-1. Load raw counts and sample metadata
-2. Normalize counts (CPM)
-3. Apply log2(x + 1) transformation
-4. Run PCA on samples
-5. Generate PCA plot colored by condition
-6. Save numerical results and figures as pipeline artifacts
+In gene expression analysis, raw or even normalized matrices are not immediately interpretable in high-dimensional space.
+
+Before any differential analysis or modeling, it is standard practice to:
+
+• Normalize expression values
+• Transform the scale
+• Reduce dimensionality
+• Inspect the global structure of samples
+
+This project formalizes that exploratory stage as a small, modular, and reproducible pipeline.
+
+---
+
+## What this pipeline does
+
+1. Loads a raw gene expression count matrix and a metadata table  
+2. Normalizes counts to CPM (Counts Per Million)  
+3. Applies log2(x + 1) transformation  
+4. Runs PCA on the processed matrix  
+5. Saves PCA coordinates as a numerical artifact  
+6. Generates a PCA scatter plot colored by experimental condition  
+
+---
+
+## Why this matters
+
+Gene expression matrices:
+
+    • Are high-dimensional (thousands of genes)
+    • Are highly skewed
+    • Contain strong scale effects and variance distortions
+    • Cannot be inspected directly
+
+PCA is not used here as a statistical test, but as a **geometric diagnostic tool**:
+
+    • To inspect whether samples cluster by condition
+    • To detect outliers or strange samples
+    • To verify whether the data structure makes sense before any modeling
+
+This exploratory step exists in virtually every serious transcriptomics workflow, but is often done in ad-hoc scripts and not formalized as a pipeline.
+
+---
+
+## What this project is NOT
+
+• This is not a differential expression analysis  
+• This is not a biological interpretation pipeline  
+• This is not a production RNA-seq workflow  
+
+It is strictly an **exploratory, structural, and methodological pipeline** for:
+
+    • Preprocessing
+    • Dimensionality reduction
+    • Global structure inspection
+
+---
+
+## Conceptual focus
+
+> "Before testing hypotheses, you must understand the geometry of your data."
+
+This project focuses on:
+
+    • Scale
+    • Variance structure
+    • Sample relationships
+    • Numerical conditioning
+
+    Not on biological conclusions.
 
 ---
 
@@ -32,10 +88,18 @@ Its focus is strictly on **data preparation, numerical conditioning and explorat
 gene-expression-pca/
 ├── data/
 │   └── raw/
+│       ├── counts.csv
+│       └── metadata.csv
 ├── pipeline/
+│   ├── __init__.py
+│   ├── io.py
+│   ├── normalization.py
+│   ├── transform.py
+│   ├── pca.py
+│   └── plots.py
 ├── outputs/
-│   ├── figures/
-│   └── tables/
+│   ├── matrices/
+│   └── figures/
 ├── run_pipeline.py
 ├── requirements.txt
 ├── README.md
@@ -44,14 +108,78 @@ gene-expression-pca/
 
 ---
 
-## Status
+## Outputs
 
-This project is under active development.
-The pipeline structure and modules will be implemented step by step.
+The pipeline produces the following versionable artifacts:
+```
+outputs/matrices/pca_coordinates.csv
+outputs/figures/pca.png
+```
+
+```pca_coordinates.csv``` contains the numerical PCA coordinates of each sample
+
+```pca.png``` is the visual inspection plot colored by experimental condition
+
+---
+
+## How to run
+
+Install dependencies:
+
+```pip install -r requirements.txt```
 
 
-## Conceptual focus
+Run the pipeline:
 
-> Before interpreting biology, you must understand the numerical structure of your data.
+```python run_pipeline.py```
 
-This repository is designed as a didactic and structural example of how exploratory transcriptomics pipelines are organized in practice.
+
+All outputs will be written to the outputs/ folder.
+
+---
+
+## Reproducibility
+
+All steps in this pipeline are:
+
+    • Explicit
+    • Deterministic
+    • Scripted
+    • Modular
+    • And produce versionable artifacts
+
+The pipeline can be rerun at any time and will always produce the same results given the same inputs.
+
+---
+
+## Data note
+
+The data used in this repository are synthetic and intended solely to demonstrate:
+
+    • The numerical behavior of the pipeline
+    • The structure of the workflow
+    • The geometry of PCA on expression-like data
+    • They do not represent real biological experiments.
+
+## Position in the project sequence
+
+
+This project sits conceptually between:
+
+    • Pure preprocessing / QC
+    and
+    • Any real downstream statistical analysis
+
+It represents the transition from:
+
+    • "Preparing the data"
+    to
+    • "Inspecting the structure of the data in multivariate space"
+
+---
+
+## License
+
+This project is released under the MIT License.
+
+---
