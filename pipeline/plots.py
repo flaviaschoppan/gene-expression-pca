@@ -45,4 +45,3 @@ def plot_pca(coords_df: pd.DataFrame, metadata: pd.DataFrame, outpath: str):
     plt.tight_layout()
     plt.savefig(outpath, dpi=150)
     plt.close()
-    
